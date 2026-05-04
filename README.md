@@ -20,7 +20,9 @@
   
   <br><br>
   <!-- OFFICIAL KO-FI BUTTON -->
-  <a href='https://ko-fi.com/A0A81R5DP5' target='_blank'><img height='36' style='border:0px;height:36px;' src='https://cdn.ko-fi.com/widgets/v3/kofi_button_dark.png' border='0' alt='Buy Me a Coffee at ko-fi.com' /></a>
+  <a href="https://ko-fi.com/A0A81R5DP5" target="_blank">
+    <img height="36" style="border:0px;height:36px;" src="https://storage.ko-fi.com/cdn/kofi6.png?v=6" border="0" alt="Buy Me a Coffee at ko-fi.com" />
+  </a>
 
 </div>
 
@@ -69,7 +71,7 @@ The official web client for Google Tasks is nothing more than a narrow sidebar h
 
 Don't take my word for it. Try it out yourself. (Requires logging in with a Google Account to read/write your tasks via official OAuth 2.0).
 
-👉 **[Launch Adi-Tasks PRO](https://total.smallhost.pl/adi-tools/gcloud/tasks.php)**
+👉 <b><a href="https://total.smallhost.pl/adi-tools/gcloud/tasks.php" target="_blank">Launch Adi-Tasks PRO</a></b>
 
 > *Tip: Open this link on your smartphone via Chrome/Safari and tap "Add to Home Screen" to experience the full native PWA power.*
 
@@ -143,7 +145,10 @@ This application is fully Open-Source. I spent countless hours optimizing every 
 If Adi-Tasks PRO saves your productivity or if you learned something cool by analyzing this code — consider buying me a coffee! It will be a massive motivational boost to keep coding! 💪
 
 <div align="center">
-  <a href="https://ko-fi.com/A0A81R5DP5" target="_blank"><img height="36" style="border:0px;height:36px;" src="https://cdn.ko-fi.com/widgets/v3/kofi_button_dark.png" border="0" alt="Buy Me a Coffee at ko-fi.com" /></a>
+  <br>
+  <a href="https://ko-fi.com/A0A81R5DP5" target="_blank">
+    <img height="40" style="border:0px;height:40px;" src="https://storage.ko-fi.com/cdn/kofi6.png?v=6" border="0" alt="Buy Me a Coffee at ko-fi.com" />
+  </a>
 </div>
 
 <br>

@@ -1,3 +1,5 @@
 .env
 token.json
 .gringo-tools/
+.clinerules
+.roomodes
