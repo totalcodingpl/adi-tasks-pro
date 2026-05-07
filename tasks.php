@@ -399,11 +399,11 @@ if (file_exists($env_path)) {
     <div style="margin: 0 auto 20px; width: 70px; height: 70px; background: rgba(79, 172, 254, 0.15); border-radius: 20px; display: flex; align-items: center; justify-content: center; border: 2px solid rgba(79, 172, 254, 0.3);">
         <img src="icon.svg" width="45" height="45" alt="Ikona">
     </div>
-    <h3>Zainstaluj Adi-Tasks PRO</h3>
-    <p style="color: rgba(255,255,255,0.7); font-size: 14px; margin-bottom: 25px;">Zainstaluj aplikację na ekranie, aby działała na pełnym ekranie i ładowała się błyskawicznie!</p>
+    <h3><span data-i18n="install_title">Zainstaluj Adi-Tasks PRO</span></h3>
+    <p style="color: rgba(255,255,255,0.7); font-size: 14px; margin-bottom: 25px;" data-i18n="install_desc">Zainstaluj aplikację na ekranie, aby działała na pełnym ekranie i ładowała się błyskawicznie!</p>
     <div class="modal-buttons">
-        <button onclick="closeModals()">Może później</button>
-        <button onclick="installPWA()" style="background: rgba(0, 230, 118, 0.2); border-color: rgba(0, 230, 118, 0.5); color: var(--success);">Zainstaluj</button>
+        <button onclick="closeModals()"><span data-i18n="cancel_later">Może później</span></button>
+        <button onclick="installPWA()" style="background: rgba(0, 230, 118, 0.2); border-color: rgba(0, 230, 118, 0.5); color: var(--success);"><span data-i18n="install">Zainstaluj</span></button>
     </div>
 </div>
 
@@ -421,30 +421,46 @@ if (file_exists($env_path)) {
     // ==========================================================
     // i18n & DICTIONARY (GLOBAL)
     // ==========================================================
-    const dict = {
-        pl: { add_task: 'Dodaj zadanie', new_list: 'Nowa lista', list_name: 'Nazwa listy', del_list: 'Usuń listę', completed: 'WYKONANE', cancel: 'Anuluj', save: 'Zapisz', delete: 'Usuń', t_err: 'Błąd!', t_ok: 'Sukces!', s_sync: 'Wykryto zmiany! Aktualizuję...', msg_del: 'Usunięto!', msg_saved: 'Zapisano!', s_del_list: 'Skasować listę i zadania?', no_mic: 'Brak obsługi mikrofonu.', syncing: 'Synchronizacja...', sending: 'Wysyłam...', deleting: 'Kasowanie...', saving: 'Zapisywanie...' },
-        en: { add_task: 'Add Task', new_list: 'New List', list_name: 'List Name', del_list: 'Delete List', completed: 'COMPLETED', cancel: 'Cancel', save: 'Save', delete: 'Delete', t_err: 'Error!', t_ok: 'Success!', s_sync: 'Changes detected! Syncing...', msg_del: 'Deleted!', msg_saved: 'Saved!', s_del_list: 'Delete list and all tasks?', no_mic: 'Mic not supported.', syncing: 'Syncing...', sending: 'Sending...', deleting: 'Deleting...', saving: 'Saving...' },
-        de: { add_task: 'Aufgabe', new_list: 'Neue Liste', list_name: 'Listenname', del_list: 'Liste löschen', completed: 'ERLEDIGT', cancel: 'Abbrechen', save: 'Speichern', delete: 'Löschen', t_err: 'Fehler!', t_ok: 'Erfolg!', s_sync: 'Änderungen! Aktualisiere...', msg_del: 'Gelöscht!', msg_saved: 'Gespeichert!', s_del_list: 'Liste löschen?', no_mic: 'Kein Mikrofon.', syncing: 'Synchronisieren...', sending: 'Senden...', deleting: 'Löschen...', saving: 'Speichern...' },
-        es: { add_task: 'Añadir tarea', new_list: 'Nueva lista', list_name: 'Nombre', del_list: 'Borrar lista', completed: 'COMPLETADO', cancel: 'Cancelar', save: 'Guardar', delete: 'Borrar', t_err: '¡Error!', t_ok: '¡Éxito!', s_sync: '¡Cambios detectados! Sincronizando...', msg_del: '¡Eliminado!', msg_saved: '¡Guardado!', s_del_list: '¿Borrar lista y tareas?', no_mic: 'Micrófono no soportado.', syncing: 'Sincronizando...', sending: 'Enviando...', deleting: 'Eliminando...', saving: 'Guardando...' },
-        fr: { add_task: 'Ajouter', new_list: 'Nouvelle liste', list_name: 'Nom de la liste', del_list: 'Supprimer la liste', completed: 'TERMINÉ', cancel: 'Annuler', save: 'Enregistrer', delete: 'Supprimer', t_err: 'Erreur!', t_ok: 'Succès!', s_sync: 'Changements détectés! Synchronisation...', msg_del: 'Supprimé!', msg_saved: 'Enregistré!', s_del_list: 'Supprimer la liste et les tâches?', no_mic: 'Micro non supporté.', syncing: 'Synchronisation...', sending: 'Envoi...', deleting: 'Suppression...', saving: 'Enregistrement...' },
-        zh: { add_task: '添加任务', new_list: '新列表', list_name: '列表名称', del_list: '删除列表', completed: '已完成', cancel: '取消', save: '保存', delete: '删除', t_err: '错误！', t_ok: '成功！', s_sync: '检测到更改！同步中...', msg_del: '已删除！', msg_saved: '已保存！', s_del_list: '删除列表和所有任务？', no_mic: '不支持麦克风。', syncing: '同步中...', sending: '发送中...', deleting: '删除中...', saving: '保存中...' },
-        ua: { add_task: 'Dodaty zavdannya', new_list: 'Novyy spysok', list_name: 'Nazva spysku', del_list: 'Vydalyty spysok', completed: 'VYKONANO', cancel: 'Skasuvaty', save: 'Zberehty', delete: 'Vydalyty', t_err: 'Pomylka!', t_ok: 'Uspikh!', s_sync: 'Zminy! Onovlyuyu...', msg_del: 'Vydaleno!', msg_saved: 'Zberezheno!', s_del_list: 'Vydalyty spysok?', no_mic: 'Mikrofon ne pidtrymuyetsya.', syncing: 'Synkhronizatsiya...', sending: 'Nadsylannya...', deleting: 'Vydalennya...', saving: 'Zberezhennya...' }
-    };
-    
-    let currentLang = localStorage.getItem('appLang') || navigator.language.substring(0,2);
-    if(!dict[currentLang]) currentLang = 'en';
+    let dict = {};
+    let currentLang = localStorage.getItem('appLang') || navigator.language.substring(0, 2);
+
+    async function loadTranslations() {
+        try {
+            const response = await fetch('tasks_dict.json');
+            dict = await response.json();
+            
+            // Jeśli zapisany język nie istnieje w słowniku, użyj angielskiego
+            if (!dict[currentLang]) currentLang = 'en';
+            
+            // Ustaw początkowy język i wstrzyknij tłumaczenia
+            setLang(currentLang);
+        } catch (error) {
+            console.error('Failed to load translations:', error);
+            // Awaryjnie załaduj pusty słownik, żeby aplikacja się nie wysypała
+            dict = { en: {} };
+        }
+    }
 
     function setLang(lang) {
         currentLang = lang; 
         localStorage.setItem('appLang', lang);
+        
+        // Zaktualizuj UI flag
         document.querySelectorAll('.flag-btn').forEach(b => b.classList.remove('active'));
-        document.getElementById('flag-'+lang).classList.add('active');
+        const activeFlag = document.getElementById('flag-' + lang);
+        if (activeFlag) activeFlag.classList.add('active');
+        
+        // Dynamiczne wstrzykiwanie tłumaczeń do elementów z atrybutem data-i18n
         document.querySelectorAll('[data-i18n]').forEach(el => { 
-            el.innerText = dict[currentLang][el.dataset.i18n] || el.dataset.i18n; 
+            const key = el.dataset.i18n;
+            if (dict[currentLang] && dict[currentLang][key]) {
+                el.innerText = dict[currentLang][key]; 
+            }
         });
         vibe('light');
     }
-    setLang(currentLang);
+
+    loadTranslations();
 
     // Dynamiczne mapowanie kodów języków dla TTS i STT
     const langCodes = { pl: 'pl-PL', en: 'en-US', de: 'de-DE', es: 'es-ES', fr: 'fr-FR', zh: 'zh-CN', ua: 'uk-UA' };
