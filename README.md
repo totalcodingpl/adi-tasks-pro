@@ -64,7 +64,7 @@ The official web client for Google Tasks is nothing more than a narrow sidebar h
 
 | Majestic Menu | Deep Drag & Drop | Voice Input |
 |:---:|:---:|:---:|
-| <!-- INSERT GIF 1 LINK HERE --> <img src="link_to_menu_gif.gif" width="250" alt="Menu Animation"> | <!-- INSERT GIF 2 LINK HERE --> <img src="link_to_drag_gif.gif" width="250" alt="Drag and Drop"> | <!-- INSERT GIF 3 LINK HERE --> <img src="link_to_voice_gif.gif" width="250" alt="Voice Input"> |
+| ![Menu and New List](./assets/menu-new-list.gif) width="420" alt="Menu Animation"> | <!-- INSERT GIF 2 LINK HERE --> <img src="link_to_drag_gif.gif" width="250" alt="Drag and Drop"> | <!-- INSERT GIF 3 LINK HERE --> <img src="link_to_voice_gif.gif" width="250" alt="Voice Input"> |
 
 ---
 
