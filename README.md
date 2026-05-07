@@ -6,8 +6,8 @@
     <a href="README.md">🇺🇸 English</a> • <a href="README-pl.md">🇵🇱 Polski</a>
   </p>
 
-  <!-- INSERT YOUR MAIN BANNER IMAGE HERE (Recommended size: 1280x720px) -->
-    <img src="assets/banner.png" alt="Adi-Tasks PRO Banner" width="100%">
+  <!-- Main Banner -->
+  <img src="assets/banner.png" alt="Adi-Tasks PRO Banner" width="100%">
 
 
   <br><br>
