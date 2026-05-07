@@ -7,7 +7,8 @@
   </p>
 
   <!-- INSERT YOUR MAIN BANNER IMAGE HERE (Recommended size: 1280x720px) -->
-  <img src="URL_TO_YOUR_MAIN_BANNER.jpg" alt="Adi-Tasks PRO Banner" width="800">
+    <img src="assets/banner.png" alt="Adi-Tasks PRO Banner" width="100%">
+
 
   <br><br>
   <b>A professional, standalone, and ultra-fast Google Tasks client built as a Progressive Web App (PWA).</b>
