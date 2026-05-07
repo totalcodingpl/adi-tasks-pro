@@ -24,6 +24,8 @@ commit_parsers = [
     { message = "^perf", group = "Performance" },
     { message = "^refactor", group = "Refactor" },
     { message = "^test", group = "Testing" },
+    { message = "^chore", group = "Maintenance" },
+    { message = "^ci", group = "CI/CD" },
 ]
 link_parsers = []
 filter_commits = false

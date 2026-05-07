@@ -563,7 +563,7 @@ if (file_exists($env_path)) {
         window.addEventListener('load', () => navigator.serviceWorker.register('sw.php'));
     }
 
-    let currentListId = '@default'; 
+    let currentListId = localStorage.getItem('lastListId') || '@default'; 
     let editingTaskId = null; 
     let allTasksData = new Map(); 
 
@@ -606,7 +606,9 @@ if (file_exists($env_path)) {
     }
 
     function selectListOption(id, title) { 
-        currentListId = id; document.getElementById('listSelectSelected').innerText = title; 
+        currentListId = id; 
+        localStorage.setItem('lastListId', id);
+        document.getElementById('listSelectSelected').innerText = title; 
         document.getElementById('listSelectContainer').classList.remove('open'); 
         loadTasks(); toggleMegaMenu(); 
     }
@@ -630,7 +632,17 @@ if (file_exists($env_path)) {
         if(!d || d.error) { selectedDiv.innerText = 'Błąd!'; return; }
         
         itemsDiv.innerHTML = d.items.map(l => `<div class="select-item" onclick="selectListOption('${l.id}', '${escapeHTML(l.title)}')">${escapeHTML(l.title)}</div>`).join('');
-        if(currentListId === '@default' && d.items.length > 0) { currentListId = d.items[0].id; selectedDiv.innerText = d.items[0].title; }
+        
+        const lastId = localStorage.getItem('lastListId');
+        const lastList = d.items.find(l => l.id === lastId);
+        
+        if(lastList) {
+            currentListId = lastList.id;
+            selectedDiv.innerText = lastList.title;
+        } else if(currentListId === '@default' && d.items.length > 0) { 
+            currentListId = d.items[0].id; 
+            selectedDiv.innerText = d.items[0].title; 
+        }
         loadTasks();
     }
 
@@ -836,7 +848,13 @@ function getFormattedDateHTML(dueStr) {
     async function saveList() { 
         const title = document.getElementById('nlTitle').value; if(!title) return; closeModals(); showToast(dict[currentLang].saving, 'info');
         const res = await req(`${API}?action=add_list`, 'POST', {title}); 
-        if(res && !res.error) { showToast(dict[currentLang].msg_saved, 'success'); document.getElementById('nlTitle').value = ''; loadLists(); } else { showToast(dict[currentLang].t_err, 'danger'); }
+        if(res && !res.error) { 
+            showToast(dict[currentLang].msg_saved, 'success'); 
+            document.getElementById('nlTitle').value = ''; 
+            currentListId = res.id;
+            localStorage.setItem('lastListId', res.id);
+            loadLists(); 
+        } else { showToast(dict[currentLang].t_err, 'danger'); }
     }
     
     function openEditListModal() { document.getElementById('elTitle').value = document.getElementById('listSelectSelected').innerText; showModal('editListModal'); }
