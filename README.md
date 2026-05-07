@@ -20,7 +20,7 @@
   
   <br><br>
   <!-- OFFICIAL KO-FI BUTTON -->
-  <a href="https://ko-fi.com/A0A81R5DP5" target="_blank">
+  <a href="https://ko-fi.com/adrianczarnecki" target="_blank">
     <img height="36" style="border:0px;height:36px;" src="https://storage.ko-fi.com/cdn/kofi6.png?v=6" border="0" alt="Buy Me a Coffee at ko-fi.com" />
   </a>
 
@@ -146,7 +146,7 @@ If Adi-Tasks PRO saves your productivity or if you learned something cool by ana
 
 <div align="center">
   <br>
-  <a href="https://ko-fi.com/A0A81R5DP5" target="_blank">
+  <a href="https://ko-fi.com/adrianczarnecki target="_blank">
     <img height="40" style="border:0px;height:40px;" src="https://storage.ko-fi.com/cdn/kofi6.png?v=6" border="0" alt="Buy Me a Coffee at ko-fi.com" />
   </a>
 </div>
