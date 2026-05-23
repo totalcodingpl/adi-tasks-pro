@@ -14,7 +14,12 @@
  */
 
 error_reporting(0);
-if (session_status() === PHP_SESSION_NONE) session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    // Czas trwania sesji w przeglądarce i na serwerze (np. 30 dni)
+    ini_set('session.cookie_lifetime', 60 * 60 * 24 * 30);
+    ini_set('session.gc_maxlifetime', 60 * 60 * 24 * 30);
+    session_start();
+}
 
 $env_path = __DIR__ . '/.env';
 if (!file_exists($env_path)) die(json_encode(['error' => 'Brak pliku .env']));
@@ -34,16 +39,15 @@ $client_id     = $env['GOOGLE_CLIENT_ID'] ?? '';
 $client_secret = $env['GOOGLE_CLIENT_SECRET'] ?? '';
 $redirect_uri  = $env['GOOGLE_REDIRECT_URI'] ?? '';
 $scopes        = $env['GOOGLE_SCOPES'] ?? '';
-$token_file    = __DIR__ . '/' . ($env['TOKEN_FILE_NAME'] ?? 'token.json');
-
-$token_exists = file_exists($token_file);
-$tokens = $token_exists ? json_decode(file_get_contents($token_file), true) : null;
+// Przechowujemy tokeny w bezpiecznej sesji PHP użytkownika (unikalnej dla każdej przeglądarki/urządzenia)
+$token_exists = isset($_SESSION['google_tokens']);
+$tokens = $token_exists ? $_SESSION['google_tokens'] : null;
 
 /**
  * RDZEŃ SYSTEMU: Funkcja uderzająca do Google, dostępna dla innych skryptów backendowych.
  */
 function google_api_call($path, $method='GET', $body=null) {
-    global $tokens, $client_id, $client_secret, $token_file;
+    global $tokens, $client_id, $client_secret;
     if (!$tokens) return ['error' => 'auth_required'];
     
     $url = "https://www.googleapis.com/" . $path;
@@ -71,10 +75,10 @@ function google_api_call($path, $method='GET', $body=null) {
         $tr = json_decode(curl_exec($rc), true);
         if (isset($tr['access_token'])) {
             $tokens['access_token'] = $tr['access_token'];
-            file_put_contents($token_file, json_encode($tokens));
+            $_SESSION['google_tokens'] = $tokens;
             return google_api_call($path, $method, $body); 
         } else { 
-            unlink($token_file); return ['error' => 'auth_required']; 
+            unset($_SESSION['google_tokens']); return ['error' => 'auth_required']; 
         }
     }
     if ($code == 204) return ['status' => 'deleted_successfully'];
@@ -93,7 +97,7 @@ if (basename($_SERVER['SCRIPT_FILENAME']) === basename(__FILE__)) {
 
     // 1. Wylogowanie
     if (isset($_GET['action']) && $_GET['action'] === 'revoke') {
-        if (file_exists($token_file)) unlink($token_file);
+        unset($_SESSION['google_tokens']);
         header("Location: " . strtok($_SERVER["REQUEST_URI"], '?')); exit;
     }
 
@@ -106,7 +110,9 @@ if (basename($_SERVER['SCRIPT_FILENAME']) === basename(__FILE__)) {
             'redirect_uri' => $redirect_uri, 'grant_type' => 'authorization_code'
         ]);
         $res = json_decode(curl_exec($ch), true);
-        if (isset($res['access_token'])) file_put_contents($token_file, json_encode($res));
+        if (isset($res['access_token'])) {
+            $_SESSION['google_tokens'] = $res;
+        }
         header("Location: " . strtok($_SERVER["REQUEST_URI"], '?')); exit;
     }
 
