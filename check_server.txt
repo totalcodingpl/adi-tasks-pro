@@ -1,0 +1,4 @@
+﻿open sftp://total:LM!6*(VFqD2w3ZU**zFf@s3.small.pl:22/ -hostkey="*"
+cd /usr/home/total/domains/total.smallhost.pl/public_html/adi-tools/gcloud
+ls
+exit
