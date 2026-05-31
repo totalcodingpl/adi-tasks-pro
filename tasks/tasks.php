@@ -1,6 +1,6 @@
 <?php
 // BEZPIECZNY ODCZYT PLIKU .ENV DLA FRONTENDU
-$env_path = __DIR__ . '/../../.env';
+$env_path = __DIR__ . '/../.env';
 $api_gateway_filename = 'google-cloud-api-gateway.php';
 $tasks_controller_filename = 'tasks-controller.php';
 

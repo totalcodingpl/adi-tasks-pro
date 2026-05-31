@@ -1,0 +1,17 @@
+open sftp://total:LM!6*(VFqD2w3ZU**zFf@s3.small.pl:22/ -hostkey="*"
+option batch continue
+option confirm off
+cd /usr/home/total/domains/total.smallhost.pl/public_html/adi-tools/gcloud
+rm icon.svg
+rm tasks_dict.json
+rm google-cloud-api-gateway.php
+rm tasks.php
+rm sw.php
+rm tasks-controller.php
+rm manifest.php
+rm -rf gcloud
+option batch abort
+put -resumesupport=off "c:\Users\user\VSCode\adi-tasks\.env" "./"
+put -resumesupport=off "c:\Users\user\VSCode\adi-tasks\gateway" "./"
+put -resumesupport=off "c:\Users\user\VSCode\adi-tasks\tasks" "./"
+exit

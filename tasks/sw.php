@@ -1,6 +1,6 @@
 <?php
 header('Content-Type: application/javascript');
-$env_path = __DIR__ . '/../../.env';
+$env_path = __DIR__ . '/../.env';
 $version = '1.2.0';
 if (file_exists($env_path)) {
     $lines = file($env_path, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);

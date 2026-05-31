@@ -1,0 +1,6 @@
+﻿open sftp://total:LM!6*(VFqD2w3ZU**zFf@s3.small.pl:22/ -hostkey="*"
+option batch abort
+option confirm off
+cd /usr/home/total/domains/total.smallhost.pl/public_html/adi-tools/gcloud/tasks
+put -resumesupport=off "c:\Users\user\VSCode\adi-tasks\tasks\tasks.php" "./"
+exit

@@ -21,7 +21,7 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-$env_path = __DIR__ . '/../../.env';
+$env_path = __DIR__ . '/../.env';
 if (!file_exists($env_path)) die(json_encode(['error' => 'Brak pliku .env']));
 
 $env = [];
