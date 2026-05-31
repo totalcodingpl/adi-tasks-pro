@@ -21,10 +21,10 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-$env_path = __DIR__ . '/.env';
+$env_path = __DIR__ . '/../../.env';
 if (!file_exists($env_path)) die(json_encode(['error' => 'Brak pliku .env']));
 
-$env =[];
+$env = [];
 $lines = file($env_path, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
 foreach ($lines as $line) {
     $line = trim($line);
@@ -39,9 +39,15 @@ $client_id     = $env['GOOGLE_CLIENT_ID'] ?? '';
 $client_secret = $env['GOOGLE_CLIENT_SECRET'] ?? '';
 $redirect_uri  = $env['GOOGLE_REDIRECT_URI'] ?? '';
 $scopes        = $env['GOOGLE_SCOPES'] ?? '';
-// Przechowujemy tokeny w bezpiecznej sesji PHP użytkownika (unikalnej dla każdej przeglądarki/urządzenia)
+// Przechowujemy tokeny w bezpiecznej sesji PHP użytkownika z fallbackiem do token.json dla wywołań CLI/Proxy
 $token_exists = isset($_SESSION['google_tokens']);
 $tokens = $token_exists ? $_SESSION['google_tokens'] : null;
+if ($tokens) {
+    // Natychmiastowy zapis do token.json w celu udostępnienia dla skryptów zewnętrznych/CLI
+    file_put_contents(__DIR__ . '/token.json', json_encode($tokens));
+} else if (file_exists(__DIR__ . '/token.json')) {
+    $tokens = json_decode(file_get_contents(__DIR__ . '/token.json'), true);
+}
 
 /**
  * RDZEŃ SYSTEMU: Funkcja uderzająca do Google, dostępna dla innych skryptów backendowych.
@@ -50,15 +56,21 @@ function google_api_call($path, $method='GET', $body=null) {
     global $tokens, $client_id, $client_secret;
     if (!$tokens) return ['error' => 'auth_required'];
     
-    $url = "https://www.googleapis.com/" . $path;
+    $url = (strpos($path, 'http') === 0) ? $path : "https://www.googleapis.com/" . $path;
     $headers = ['Authorization: Bearer ' . $tokens['access_token']];
     
     $ch = curl_init($url);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $method);
     if ($body) { 
-        $headers[] = 'Content-Type: application/json'; 
-        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($body)); 
+        if (is_array($body)) {
+            $headers[] = 'Content-Type: application/json'; 
+            curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($body)); 
+        } else {
+            // Surowy plik binarny (np. do wgrywania miniaturki)
+            $headers[] = 'Content-Type: image/png';
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $body);
+        }
     }
     curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
     $res = curl_exec($ch); 
@@ -68,7 +80,7 @@ function google_api_call($path, $method='GET', $body=null) {
     if ($code == 401) { 
         $rc = curl_init('https://oauth2.googleapis.com/token');
         curl_setopt($rc, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($rc, CURLOPT_POSTFIELDS,[
+        curl_setopt($rc, CURLOPT_POSTFIELDS, [
             'client_id' => $client_id, 'client_secret' => $client_secret, 
             'refresh_token' => $tokens['refresh_token'] ?? '', 'grant_type' => 'refresh_token'
         ]);
@@ -76,13 +88,16 @@ function google_api_call($path, $method='GET', $body=null) {
         if (isset($tr['access_token'])) {
             $tokens['access_token'] = $tr['access_token'];
             $_SESSION['google_tokens'] = $tokens;
+            file_put_contents(__DIR__ . '/token.json', json_encode($tokens));
             return google_api_call($path, $method, $body); 
         } else { 
-            unset($_SESSION['google_tokens']); return ['error' => 'auth_required']; 
+            unset($_SESSION['google_tokens']); 
+            if (file_exists(__DIR__ . '/token.json')) @unlink(__DIR__ . '/token.json');
+            return ['error' => 'auth_required']; 
         }
     }
     if ($code == 204) return ['status' => 'deleted_successfully'];
-    return json_decode($res, true) ??['error' => 'Empty response', 'http_code' => $code];
+    return json_decode($res, true) ?? ['error' => 'Empty response', 'http_code' => $code];
 }
 
 // ==========================================================================================
@@ -98,6 +113,7 @@ if (basename($_SERVER['SCRIPT_FILENAME']) === basename(__FILE__)) {
     // 1. Wylogowanie
     if (isset($_GET['action']) && $_GET['action'] === 'revoke') {
         unset($_SESSION['google_tokens']);
+        if (file_exists(__DIR__ . '/token.json')) @unlink(__DIR__ . '/token.json');
         header("Location: " . strtok($_SERVER["REQUEST_URI"], '?')); exit;
     }
 
@@ -105,13 +121,14 @@ if (basename($_SERVER['SCRIPT_FILENAME']) === basename(__FILE__)) {
     if (isset($_GET['code'])) {
         $ch = curl_init('https://oauth2.googleapis.com/token');
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_POSTFIELDS,[
+        curl_setopt($ch, CURLOPT_POSTFIELDS, [
             'code' => $_GET['code'], 'client_id' => $client_id, 'client_secret' => $client_secret,
             'redirect_uri' => $redirect_uri, 'grant_type' => 'authorization_code'
         ]);
         $res = json_decode(curl_exec($ch), true);
         if (isset($res['access_token'])) {
             $_SESSION['google_tokens'] = $res;
+            file_put_contents(__DIR__ . '/token.json', json_encode($res));
         }
         header("Location: " . strtok($_SERVER["REQUEST_URI"], '?')); exit;
     }
@@ -122,16 +139,63 @@ if (basename($_SERVER['SCRIPT_FILENAME']) === basename(__FILE__)) {
         header('Content-Type: application/json');
         $endpoint = $_GET['endpoint'] ?? '';
         $method = $_SERVER['REQUEST_METHOD'];
-        $json_input = json_decode(file_get_contents('php://input'), true) ?:[];
+        $json_input = json_decode(file_get_contents('php://input'), true) ?: [];
         $payload = array_merge($_POST, $json_input);
         echo json_encode(google_api_call($endpoint, $method, empty($payload) ? null : $payload));
         exit;
     }
 
     // 4. GUI Dashboard
+    // Zabezpieczenie hasłem
+    $gateway_password = $env['GATEWAY_PASSWORD'] ?? 'Ksantypa1*';
+    if (isset($_POST['gateway_pwd'])) {
+        if ($_POST['gateway_pwd'] === $gateway_password) {
+            $_SESSION['gateway_auth'] = true;
+            header("Location: " . strtok($_SERVER["REQUEST_URI"], '?'));
+            exit;
+        } else {
+            $pwd_error = true;
+        }
+    }
+    if (isset($_GET['action']) && $_GET['action'] === 'reset_pwd') {
+        unset($_SESSION['gateway_auth']);
+        header("Location: " . strtok($_SERVER["REQUEST_URI"], '?'));
+        exit;
+    }
+    if (empty($_SESSION['gateway_auth'])) {
+        ?>
+        <!DOCTYPE html>
+        <html lang="pl">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Gateway - Logowanie</title>
+            <style>
+                body { background: #0f2027; color: white; font-family: 'Segoe UI', system-ui, sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+                .popup { background: rgba(20, 20, 30, 0.8); padding: 40px; border-radius: 16px; text-align: center; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 25px 50px rgba(0,0,0,0.5); }
+                input { padding: 12px; border-radius: 8px; border: 1px solid #4facfe; background: rgba(0,0,0,0.5); color: #fff; outline: none; margin-bottom: 15px; width: 100%; box-sizing: border-box; font-size: 16px; }
+                button { padding: 12px 20px; background: #4facfe; color: #fff; border: none; border-radius: 8px; cursor: pointer; width: 100%; font-weight: bold; font-size: 16px; transition: 0.3s; }
+                button:hover { background: #3a9bdc; }
+            </style>
+        </head>
+        <body>
+            <div class="popup">
+                <h2 style="margin-top:0;">Wymagane Hasło</h2>
+                <?php if (isset($pwd_error)) echo "<p style='color:#ff416c; margin-bottom: 15px;'>Nieprawidłowe hasło!</p>"; ?>
+                <form method="POST">
+                    <input type="password" name="gateway_pwd" placeholder="Podaj hasło do bramki..." required autofocus>
+                    <button type="submit">Odblokuj</button>
+                </form>
+            </div>
+        </body>
+        </html>
+        <?php
+        exit;
+    }
+
     $auth_url = "https://accounts.google.com/o/oauth2/v2/auth?" . http_build_query([
         'client_id' => $client_id, 'redirect_uri' => $redirect_uri, 'response_type' => 'code',
-        'scope' => $scopes, 'access_type' => 'offline', 'prompt' => 'consent'
+        'scope' => $scopes, 'access_type' => 'offline', 'prompt' => 'consent select_account'
     ]);
 
     $scope_array = array_filter(explode(" ", $scopes));
@@ -184,6 +248,7 @@ if (basename($_SERVER['SCRIPT_FILENAME']) === basename(__FILE__)) {
                     <?= $services_html ?>
                 </div>
                 <a href="?action=revoke" class="btn btn-danger">Odłącz konto (Usuń Token)</a>
+                <a href="?action=reset_pwd" class="btn" style="margin-top: 15px; color: #ff9f43; border-bottom: 3px solid rgba(255, 159, 67, 0.8);">Zablokuj Gateway (Reset Hasła)</a>
             <?php else: ?>
                 <div class="pulse-dot inactive"></div>
                 <h1>Brak autoryzacji</h1>

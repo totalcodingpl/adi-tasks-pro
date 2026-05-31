@@ -17,7 +17,7 @@ header('Access-Control-Allow-Headers: Content-Type');
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') { http_response_code(200); exit; }
 
 // Wczytujemy Gateway jako bibliotekę (udostępnia nam funkcję google_api_call!)
-require_once __DIR__ . '/google-cloud-api-gateway.php';
+require_once __DIR__ . '/../gateway/google-cloud-api-gateway.php';
 
 $json_input = json_decode(file_get_contents('php://input'), true) ?:[];
 $req_data = array_merge($_GET, $_POST, $json_input);

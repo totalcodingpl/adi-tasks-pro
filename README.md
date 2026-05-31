@@ -110,7 +110,7 @@ Want to host this app on your own server? Follow these steps:
 Fill your `.env` file with the following variables:
 
 ```ini
-APP_VERSION="1.0.1"
+APP_VERSION="1.2.0"
 
 # GOOGLE CREDENTIALS
 GOOGLE_CLIENT_ID="your-client-id.apps.googleusercontent.com"
