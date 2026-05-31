@@ -14,7 +14,7 @@ if (file_exists($env_path)) {
             $key = trim($key);
             $value = trim($value, " \t\n\r\0\x0B\"'");
             
-            if ($key === 'GOOGLE_REDIRECT_URI') $api_gateway_filename = basename($value);
+            if ($key === 'GOOGLE_REDIRECT_URI') $api_gateway_filename = $value;
             if ($key === 'TASKS_CONTROLLER_FILE') $tasks_controller_filename = $value;
         }
     }
